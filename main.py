@@ -76,8 +76,8 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
         }
 
         target_path = os.path.join(target_path, "Europe")
-        os.makedirs(location_path, exist_ok=True)  # Ensure the main location folder is created
-        create_nested_folders(location_path, europe_structure, europe_file_mapping, uploaded_files)
+        os.makedirs(target_path, exist_ok=True)  # Ensure the main location folder is created
+        create_nested_folders(target_path, europe_structure, europe_file_mapping, uploaded_files)
         st.success("Europe folders created and files allocated successfully.")
 
     elif location.lower() == "united states":
@@ -110,10 +110,10 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
         }
 
         target_path = os.path.join(target_path, "United States")
-        os.makedirs(location_path, exist_ok=True)  # Ensure the main location folder is created
+        os.makedirs(target_path, exist_ok=True)  # Ensure the main location folder is created
 
         for folder in us_structure:
-            folder_path = os.path.join(location_path, folder)
+            folder_path = os.path.join(target_path, folder)
             os.makedirs(folder_path, exist_ok=True)
 
             if folder in file_mapping and uploaded_files:
