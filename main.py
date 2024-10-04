@@ -3,16 +3,17 @@ import shutil
 import streamlit as st
 
 def create_nested_folders(parent_path, structure, file_mapping=None, uploaded_files=None):
+    # Ensure the folder structure is created first
     for key, value in structure.items():
         folder_path = os.path.join(parent_path, key)
-        os.makedirs(folder_path, exist_ok=True)
+        os.makedirs(folder_path, exist_ok=True)  # Create the folder if it doesn't exist
 
-        # Copy the corresponding file if available in uploaded files
+        # Handle file placement
         if file_mapping and key in file_mapping and uploaded_files:
             file = file_mapping[key]
             matching_files = [f for f in uploaded_files if f.name == file]
             if matching_files:
-                # Write the file to the target folder path
+                # Write the file to the folder
                 target_file_path = os.path.join(folder_path, matching_files[0].name)
                 with open(target_file_path, "wb") as f:
                     f.write(matching_files[0].getbuffer())
@@ -20,7 +21,7 @@ def create_nested_folders(parent_path, structure, file_mapping=None, uploaded_fi
             else:
                 st.warning(f"File {file} not found in uploaded files.")
 
-        # Create nested folders if the value is a dictionary
+        # Recursively create nested folders if needed
         if isinstance(value, dict):
             create_nested_folders(folder_path, value, file_mapping, uploaded_files)
 
@@ -75,7 +76,7 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
         }
 
         location_path = os.path.join(target_path, "Europe")
-        os.makedirs(location_path, exist_ok=True)
+        os.makedirs(location_path, exist_ok=True)  # Ensure the main location folder is created
         create_nested_folders(location_path, europe_structure, europe_file_mapping, uploaded_files)
         st.success("Europe folders created and files allocated successfully.")
 
@@ -109,7 +110,7 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
         }
 
         location_path = os.path.join(target_path, "United States")
-        os.makedirs(location_path, exist_ok=True)
+        os.makedirs(location_path, exist_ok=True)  # Ensure the main location folder is created
 
         for folder in us_structure:
             folder_path = os.path.join(location_path, folder)
