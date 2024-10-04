@@ -1,5 +1,4 @@
 import os
-import shutil
 import streamlit as st
 
 def create_nested_folders(parent_path, structure, file_mapping=None, uploaded_files=None):
@@ -75,10 +74,10 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
             "8. Reference documents": "PVEP.docx"
         }
 
-        target_path = os.path.join(target_path, "Europe")
+        target_path = os.path.abspath(os.path.join(target_path, "Europe"))  # Use absolute path
         os.makedirs(target_path, exist_ok=True)  # Ensure the main location folder is created
         create_nested_folders(target_path, europe_structure, europe_file_mapping, uploaded_files)
-        st.success("Europe folders created and files allocated successfully.")
+        st.success(f"Europe folders created at {target_path} and files allocated successfully.")
 
     elif location.lower() == "united states":
         us_structure = [
@@ -109,7 +108,7 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
             "11 EXECUTIVE SUMMARY/PREDICATE COMPARISON": "TMVP.docx"
         }
 
-        target_path = os.path.join(target_path, "United States")
+        target_path = os.path.abspath(os.path.join(target_path, "United States"))  # Use absolute path
         os.makedirs(target_path, exist_ok=True)  # Ensure the main location folder is created
 
         for folder in us_structure:
@@ -127,7 +126,7 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
                 else:
                     st.warning(f"File {file} not found in uploaded files.")
 
-        st.success("United States folders created and files allocated successfully.")
+        st.success(f"United States folders created at {target_path} and files allocated successfully.")
 
     else:
         st.error("Invalid location input.")
