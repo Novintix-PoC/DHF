@@ -1,8 +1,8 @@
 import os
 import streamlit as st
 
+
 def create_nested_folders(parent_path, structure, file_mapping=None, uploaded_files=None):
-    # Ensure the folder structure is created first
     for key, value in structure.items():
         folder_path = os.path.join(parent_path, key)
         os.makedirs(folder_path, exist_ok=True)  # Create the folder if it doesn't exist
@@ -74,7 +74,8 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
             "8. Reference documents": "PVEP.docx"
         }
 
-        target_path = os.path.abspath(os.path.join(target_path, "Europe"))  # Use absolute path
+        # Ensure absolute path
+        target_path = os.path.abspath(target_path)
         os.makedirs(target_path, exist_ok=True)  # Ensure the main location folder is created
         create_nested_folders(target_path, europe_structure, europe_file_mapping, uploaded_files)
         st.success(f"Europe folders created at {target_path} and files allocated successfully.")
@@ -94,7 +95,7 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
             "11 EXECUTIVE SUMMARY/PREDICATE COMPARISON"
         ]
 
-        file_mapping = {
+        us_file_mapping = {
             "1 MEDICAL DEVICE USER FEE COVER SHEET (FORM FDA 3601)": "CHP.docx",
             "2 CENTER FOR DEVICES AND RADIOLOGICAL HEALTH (CDRH) PREMARKET REVIEW SUBMISSION COVER SHEET (FORM FDA 3514)": "DCRM.docx",
             "3 510(K) COVER LETTER": "IFU.docx",
@@ -108,15 +109,16 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
             "11 EXECUTIVE SUMMARY/PREDICATE COMPARISON": "TMVP.docx"
         }
 
-        target_path = os.path.abspath(os.path.join(target_path, "United States"))  # Use absolute path
+        # Ensure absolute path
+        target_path = os.path.abspath(target_path)
         os.makedirs(target_path, exist_ok=True)  # Ensure the main location folder is created
 
         for folder in us_structure:
             folder_path = os.path.join(target_path, folder)
             os.makedirs(folder_path, exist_ok=True)
 
-            if folder in file_mapping and uploaded_files:
-                file = file_mapping[folder]
+            if folder in us_file_mapping and uploaded_files:
+                file = us_file_mapping[folder]
                 matching_files = [f for f in uploaded_files if f.name == file]
                 if matching_files:
                     target_file_path = os.path.join(folder_path, matching_files[0].name)
