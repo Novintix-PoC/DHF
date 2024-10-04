@@ -1,7 +1,6 @@
 import os
 import streamlit as st
 
-
 def create_nested_folders(parent_path, structure, file_mapping=None, uploaded_files=None):
     for key, value in structure.items():
         folder_path = os.path.join(parent_path, key)
