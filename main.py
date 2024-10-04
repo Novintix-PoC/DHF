@@ -75,7 +75,7 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
             "8. Reference documents": "PVEP.docx"
         }
 
-        location_path = os.path.join(target_path, "Europe")
+        target_path = os.path.join(target_path, "Europe")
         os.makedirs(location_path, exist_ok=True)  # Ensure the main location folder is created
         create_nested_folders(location_path, europe_structure, europe_file_mapping, uploaded_files)
         st.success("Europe folders created and files allocated successfully.")
@@ -109,7 +109,7 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
             "11 EXECUTIVE SUMMARY/PREDICATE COMPARISON": "TMVP.docx"
         }
 
-        location_path = os.path.join(target_path, "United States")
+        target_path = os.path.join(target_path, "United States")
         os.makedirs(location_path, exist_ok=True)  # Ensure the main location folder is created
 
         for folder in us_structure:
