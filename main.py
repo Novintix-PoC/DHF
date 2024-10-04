@@ -5,66 +5,24 @@ import streamlit as st
 def create_nested_folders(parent_path, structure, file_mapping=None, uploaded_files=None):
     for key, value in structure.items():
         folder_path = os.path.join(parent_path, key)
-        try:
-            os.makedirs(folder_path, exist_ok=True)
-            st.write(f"✅ Created folder: {folder_path}")
-        except Exception as e:
-            st.error(f"❌ Error creating folder {folder_path}: {e}")
-            continue
+        os.makedirs(folder_path, exist_ok=True)
 
         # Copy the corresponding file if available in uploaded files
         if file_mapping and key in file_mapping and uploaded_files:
             file = file_mapping[key]
             matching_files = [f for f in uploaded_files if f.name == file]
             if matching_files:
-                try:
-                    with open(os.path.join(folder_path, matching_files[0].name), "wb") as f:
-                        f.write(matching_files[0].getbuffer())
-                    st.write(f"📄 Saved file {matching_files[0].name} to {folder_path}")
-                except Exception as e:
-                    st.error(f"❌ Error saving file {matching_files[0].name} to {folder_path}: {e}")
+                # Write the file to the target folder path
+                target_file_path = os.path.join(folder_path, matching_files[0].name)
+                with open(target_file_path, "wb") as f:
+                    f.write(matching_files[0].getbuffer())
+                st.info(f"File {matching_files[0].name} saved to {target_file_path}")
             else:
-                st.warning(f"⚠️ File {file} not found in uploaded files.")
+                st.warning(f"File {file} not found in uploaded files.")
 
         # Create nested folders if the value is a dictionary
         if isinstance(value, dict):
             create_nested_folders(folder_path, value, file_mapping, uploaded_files)
-
-st.markdown("""
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
-
-        .stApp {
-            background: #0e4166;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        [data-testid=stHeader] {
-            background: #0e4166;
-        }
-        [data-testid=stWidgetLabel] {
-            color:#f4a303;
-        }
-
-        .stHeading h1{
-            color:#f4a303;
-        }
-
-        [data-testid=stAppViewBlockContainer],[data-testid=stVerticalBlock]{
-            margin-top:30px;
-        }
-
-        .title-container {
-            background: rgb(0,27,44);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            text-align:center;
-            padding:5px;
-            margin-bottom:10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-""", unsafe_allow_html=True)
 
 def create_folders_and_allocate_files(location, target_path, uploaded_files=None):
     if location.lower() == "europe":
@@ -117,15 +75,9 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
         }
 
         location_path = os.path.join(target_path, "Europe")
-        try:
-            os.makedirs(location_path, exist_ok=True)
-            st.write(f"✅ Created main location folder: {location_path}")
-        except Exception as e:
-            st.error(f"❌ Error creating main location folder {location_path}: {e}")
-            return
-
+        os.makedirs(location_path, exist_ok=True)
         create_nested_folders(location_path, europe_structure, europe_file_mapping, uploaded_files)
-        st.success("🎉 Europe folders created and files allocated successfully.")
+        st.success("Europe folders created and files allocated successfully.")
 
     elif location.lower() == "united states":
         us_structure = [
@@ -157,78 +109,41 @@ def create_folders_and_allocate_files(location, target_path, uploaded_files=None
         }
 
         location_path = os.path.join(target_path, "United States")
-        try:
-            os.makedirs(location_path, exist_ok=True)
-            st.write(f"✅ Created main location folder: {location_path}")
-        except Exception as e:
-            st.error(f"❌ Error creating main location folder {location_path}: {e}")
-            return
+        os.makedirs(location_path, exist_ok=True)
 
         for folder in us_structure:
             folder_path = os.path.join(location_path, folder)
-            try:
-                os.makedirs(folder_path, exist_ok=True)
-                st.write(f"✅ Created folder: {folder_path}")
-            except Exception as e:
-                st.error(f"❌ Error creating folder {folder_path}: {e}")
-                continue
+            os.makedirs(folder_path, exist_ok=True)
 
             if folder in file_mapping and uploaded_files:
                 file = file_mapping[folder]
                 matching_files = [f for f in uploaded_files if f.name == file]
                 if matching_files:
-                    try:
-                        with open(os.path.join(folder_path, matching_files[0].name), "wb") as f:
-                            f.write(matching_files[0].getbuffer())
-                        st.write(f"📄 Saved file {matching_files[0].name} to {folder_path}")
-                    except Exception as e:
-                        st.error(f"❌ Error saving file {matching_files[0].name} to {folder_path}: {e}")
+                    target_file_path = os.path.join(folder_path, matching_files[0].name)
+                    with open(target_file_path, "wb") as f:
+                        f.write(matching_files[0].getbuffer())
+                    st.info(f"File {matching_files[0].name} saved to {target_file_path}")
                 else:
-                    st.warning(f"⚠️ File {file} not found in uploaded files.")
+                    st.warning(f"File {file} not found in uploaded files.")
 
-        st.success("🎉 United States folders created and files allocated successfully.")
+        st.success("United States folders created and files allocated successfully.")
 
     else:
-        st.error("❌ Invalid location input.")
+        st.error("Invalid location input.")
         return
 
 def main():
-    st.title("📁 Document Management System")
-    
-    location = st.selectbox("🌍 Select Location", ["Europe", "United States"])
-    target_path = st.text_input("📂 Enter the **absolute** path where you want to create the folders:")
+    st.title("Document Management System")
+    location = st.selectbox("Select Location", ["Europe", "United States"])
+    target_path = st.text_input("Enter the path where you want to create the folders:")
 
-    uploaded_files = st.file_uploader("📤 Upload the source files", accept_multiple_files=True, type=["docx"])
+    uploaded_files = st.file_uploader("Upload the source files", accept_multiple_files=True, type=["docx"])
 
-    if st.button("🚀 Process"):
-        # Input Validations
-        if not location:
-            st.error("❌ Please select a location.")
-        elif not target_path:
-            st.error("❌ Please enter the target path.")
-        elif not uploaded_files:
-            st.error("❌ Please upload the source files.")
-        else:
-            # Validate target path
-            if not os.path.isabs(target_path):
-                st.error("❌ Please enter an **absolute** path (e.g., `C:/Users/YourName/Documents`).")
-                return
-            if not os.path.exists(target_path):
-                st.warning("⚠️ Target path does not exist. Attempting to create it.")
-                try:
-                    os.makedirs(target_path, exist_ok=True)
-                    st.write(f"✅ Created target path: {target_path}")
-                except Exception as e:
-                    st.error(f"❌ Error creating target path {target_path}: {e}")
-                    return
-            # Check write permissions
-            if not os.access(target_path, os.W_OK):
-                st.error("❌ No write permission to the target path.")
-                return
-
-            # Proceed to create folders and allocate files
+    if st.button("Process"):
+        if location and target_path and uploaded_files:
             create_folders_and_allocate_files(location, target_path, uploaded_files)
-            st.success("✅ Task completed successfully.")
+        else:
+            st.error("Please provide all inputs (location, target path, and upload files).")
 
 if __name__ == "__main__":
     main()
